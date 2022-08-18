@@ -1,5 +1,7 @@
 package com.chessgame.chess;
 
+import java.util.List;
+
 /**
  * @author Bittere_Gift
  */
@@ -18,6 +20,16 @@ public class NullChess extends Chess {
     public NullChess(Color color, Point position) {
         super(color, position);
         setName("Null");
+    }
+
+    /**
+     * return all possible strategies for this chess
+     *
+     * @return a List of Point of all possible strategies
+     */
+    @Override
+    protected List<Point> getPossibleMoves() {
+        return null;
     }
 
 }

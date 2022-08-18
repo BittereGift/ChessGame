@@ -3,6 +3,7 @@ package com.chessgame.game;
 import com.chessgame.chess.Chess;
 import com.chessgame.chess.Color;
 import com.chessgame.player.AbstractPlayer;
+import com.chessgame.util.Util;
 
 import java.util.Arrays;
 
@@ -11,6 +12,7 @@ import java.util.Arrays;
  */
 public class Game {
 
+    public final static int BOARD_SIZE = 8;
     private AbstractPlayer whitePlayer;
     private AbstractPlayer blackPlayer;
     private int round;
@@ -24,11 +26,11 @@ public class Game {
         this.blackPlayer = blackPlayer;
     }
 
-    public Game(AbstractPlayer whitePlayer, AbstractPlayer blackPlayer, Chess[][] chessBoard) {
+    public Game(AbstractPlayer whitePlayer, AbstractPlayer blackPlayer, Chess[][] chessBoard, Color currentPlayerColor) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
-        this.chessBoard = chessBoard;
-
+        this.chessBoard = Util.cloneChessBoard(chessBoard);
+        //TODO
     }
 
     public AbstractPlayer getWhitePlayer() {

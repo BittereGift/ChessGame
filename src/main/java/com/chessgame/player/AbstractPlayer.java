@@ -14,6 +14,14 @@ public abstract class AbstractPlayer {
     private int playedCount;
     private int winCount;
 
+    public void addWinCount(int addWinCount) {
+        winCount += addWinCount;
+    }
+
+    public void addPlayedCount(int addPlayedCount) {
+        playedCount += addPlayedCount;
+    }
+
     @Override
     public String toString() {
         return "AbstractPlayer{" +
@@ -63,5 +71,9 @@ public abstract class AbstractPlayer {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public double getWinRate() {
+        return playedCount == 0 ? 0 : (double) (winCount / totalPlayerCount);
     }
 }

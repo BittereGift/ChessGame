@@ -48,4 +48,5 @@ public class ChessGameTest {
         System.out.println("args2:" + Arrays.toString(args2));
         System.out.println(args2[0][0].getColor());
     }
+
 }
