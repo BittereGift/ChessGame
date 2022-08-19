@@ -5,12 +5,10 @@ import java.io.Serializable;
 /**
  * @author Bittere_Gift
  */
-public interface Color extends Serializable {
-
-    /**
-     * return the string of color
-     * @return the string of color
-     */
-    String toString();
+public enum Color implements Serializable {
+    //棋子颜色
+    BLACK,
+    WHITE,
+    NULL
 
 }

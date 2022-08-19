@@ -1,7 +1,5 @@
 package com.chessgame.chess;
 
-import com.chessgame.util.Util;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class King extends Chess {
      * @return a List of Point of all possible strategies
      */
     @Override
-    protected List<Point> getPossibleMoves() {
+    public List<Point> getPossibleMoves() {
         List<Point> moves = new ArrayList<>();
         List<Point> simpleMoves = getSimpleMoves();
         List<Point> castlingMoves = getCastlingMoves();
@@ -42,15 +40,12 @@ public class King extends Chess {
 
     private List<Point> getSimpleMoves() {
         List<Point> moves = new ArrayList<>();
-        int row = this.getPosition().getRow();
-        int col = this.getPosition().getCol();
+        int row = this.getRow();
+        int col = this.getCol();
         for (int i = row - 1; i < row + 2; i++) {
             for (int j = col - 1; j < col + 2; j++) {
-                if (!isInBoardPoint(this.getPosition())) {
-                    continue;
-                }
                 Point currentPoint = new Point(i, j);
-                if (isNullOrDifferentColorPosition(currentPoint)) {
+                if (isLegalPosition(currentPoint)) {
                     moves.add(currentPoint);
                 }
             }

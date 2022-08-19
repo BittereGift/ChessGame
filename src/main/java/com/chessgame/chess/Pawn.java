@@ -1,5 +1,6 @@
 package com.chessgame.chess;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,8 +29,46 @@ public class Pawn extends Chess {
      * @return a List of Point of all possible strategies
      */
     @Override
-    protected List<Point> getPossibleMoves() {
-        return null;
+    public List<Point> getPossibleMoves() {
+        List<Point> moves = new ArrayList<>();
+        List<Point> forwardMove = getForwardMoves();
+        List<Point> forwardEatMove = getForwardEatMoves();
+
+        moves.addAll(forwardMove);
+        moves.addAll(forwardEatMove);
+        return moves;
+    }
+
+    private List<Point> getForwardMoves() {
+        List<Point> moves = new ArrayList<>();
+        int row = this.getRow();
+        int col = this.getCol();
+
+        //one step
+        row = isWhiteColor() ? row - 1 : row + 1;
+        Point point = new Point(row, col);
+        if (!isLegalPosition(point)) {
+            return new ArrayList<>();
+        }
+        moves.add(point);
+
+        //two steps
+        row = isWhiteColor() ? row - 2 : row + 2;
+        point = new Point(row, col);
+        if (isLegalPosition(point) && !isMoved()) {
+            moves.add(point);
+        }
+        return moves;
+    }
+
+    private List<Point> getForwardEatMoves() {
+        //TODO getForwardEatMove
+        return new ArrayList<>();
+    }
+
+    private List<Point> getEnPassantMoves() {
+        //TODO getEnPassantMoves
+        return new ArrayList<>();
     }
 
 }

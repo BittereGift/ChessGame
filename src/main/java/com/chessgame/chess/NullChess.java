@@ -2,23 +2,15 @@ package com.chessgame.chess;
 
 import java.util.List;
 
+import static com.chessgame.chess.Color.NULL;
+
 /**
  * @author Bittere_Gift
  */
 public class NullChess extends Chess {
 
-    public NullChess() {
-        super();
-        setName("Null");
-    }
-
-    public NullChess(Color color) {
-        super(color);
-        setName("Null");
-    }
-
-    public NullChess(Color color, Point position) {
-        super(color, position);
+    public NullChess(Point point) {
+        super(NULL, point);
         setName("Null");
     }
 
@@ -28,8 +20,13 @@ public class NullChess extends Chess {
      * @return a List of Point of all possible strategies
      */
     @Override
-    protected List<Point> getPossibleMoves() {
+    public List<Point> getPossibleMoves() {
         return null;
+    }
+
+    @Override
+    protected List<Point> getPossibleMovesOnOneDirection(Direction direction) {
+        throw new UnsupportedOperationException("Not supported");
     }
 
 }

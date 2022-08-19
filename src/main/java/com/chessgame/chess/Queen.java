@@ -29,9 +29,13 @@ public class Queen extends Chess {
      * @return a List of Point of all possible strategies
      */
     @Override
-    protected List<Point> getPossibleMoves() {
+    public List<Point> getPossibleMoves() {
         List<Point> moves = new ArrayList<>();
-
+        for (Direction direction : Direction.values()) {
+            List<Point> possibleMovesOnOneDirection = getPossibleMovesOnOneDirection(direction);
+            moves.addAll(possibleMovesOnOneDirection);
+        }
+        return moves;
     }
 
 }

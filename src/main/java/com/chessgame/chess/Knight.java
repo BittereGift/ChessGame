@@ -1,5 +1,6 @@
 package com.chessgame.chess;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,17 +10,17 @@ public class Knight extends Chess {
 
     public Knight() {
         super();
-        setName("Knight");
+        setName("Knigh");
     }
 
     public Knight(Color color) {
         super(color);
-        setName("Knight");
+        setName("Knigh");
     }
 
     public Knight(Color color, Point position) {
         super(color, position);
-        setName("Knight");
+        setName("Knigh");
     }
 
     /**
@@ -28,8 +29,26 @@ public class Knight extends Chess {
      * @return a List of Point of all possible strategies
      */
     @Override
-    protected List<Point> getPossibleMoves() {
-        return null;
+    public List<Point> getPossibleMoves() {
+        List<Point> moves = new ArrayList<>();
+        int row = this.getRow();
+        int col = this.getCol();
+        Point[] points = new Point[] {
+                new Point(row + 1, col - 2),
+                new Point(row + 2, col - 1),
+                new Point(row - 1, col - 2),
+                new Point(row - 2, col - 1),
+                new Point(row + 1, col + 2),
+                new Point(row + 2, col + 1),
+                new Point(row - 1, col + 2),
+                new Point(row - 2, col + 1),
+        };
+        for (Point p : points) {
+            if (isLegalPosition(p)) {
+                moves.add(p);
+            }
+        }
+        return moves;
     }
 
 }
