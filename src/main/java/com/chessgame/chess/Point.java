@@ -1,6 +1,7 @@
 package com.chessgame.chess;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Bittere_Gift
@@ -37,5 +38,22 @@ public class Point implements Serializable {
 
     public void setCol(int col) {
         this.col = col;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Point point = (Point) o;
+        return row == point.row && col == point.col;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row, col);
     }
 }

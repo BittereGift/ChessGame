@@ -2,7 +2,9 @@ package com.chessgame.chess;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.chessgame.chess.Color.BLACK;
 import static com.chessgame.chess.Color.WHITE;
@@ -18,6 +20,7 @@ public abstract class Chess implements Serializable {
     private String name;
     private Chess[][] chessBoard;
     private boolean isMoved = false;
+    private Point enPassantOriginPawn = null;
 
     public Chess() {}
 
@@ -36,6 +39,10 @@ public abstract class Chess implements Serializable {
      */
     public abstract List<Point> getPossibleMoves();
 
+    public boolean isCheck() {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
     protected boolean isInBoardPoint(Point p) {
         int row = p.getRow();
         int col = p.getCol();
@@ -47,10 +54,10 @@ public abstract class Chess implements Serializable {
     }
 
     protected boolean isOtherSideChessPosition(Point p) {
-        if (isWhiteColor()) {
-            return getChessByPoint(p).isBlackColor();
+        if (isWhite()) {
+            return getChessByPoint(p).isBlack();
         }
-        return getChessByPoint(p).isWhiteColor();
+        return getChessByPoint(p).isWhite();
     }
 
     protected boolean isSameColorPosition(Point p) {
@@ -61,19 +68,23 @@ public abstract class Chess implements Serializable {
         return getChessByPoint(p) instanceof NullChess;
     }
 
+    protected boolean isEatablePosition(Point p) {
+        return isInBoardPoint(p) && isOtherSideChessPosition(p);
+    }
+
     protected Chess getChessByPoint(Point p) {
         return chessBoard[p.getRow()][p.getCol()];
     }
 
     enum Direction {
         //将正负数封装给8个方向
-        UP(0, -1),
-        UP_RIGHT(1, -1),
-        RIGHT(1, 0),
+        UP(-1, 0),
+        UP_RIGHT(-1, 1),
+        RIGHT(0, 1),
         DOWN_RIGHT(1, 1),
-        DOWN(0, 1),
-        DOWN_LEFT(-1, 1),
-        LEFT(-1, 0),
+        DOWN(1, 0),
+        DOWN_LEFT(1, -1),
+        LEFT(0, -1),
         UP_LEFT(-1, -1);
 
         private final int rowDirection;
@@ -84,19 +95,19 @@ public abstract class Chess implements Serializable {
             this.colDirection = colDirection;
         }
 
-        public int getRowDirection() {
+        public int getRow() {
             return rowDirection;
         }
 
-        public int getColDirection() {
+        public int getCol() {
             return colDirection;
         }
     }
 
     protected List<Point> getPossibleMovesOnOneDirection(Direction direction) {
         List<Point> movesOnOneDirection = new ArrayList<>();
-        int rowDirection = direction.getRowDirection();
-        int colDirection = direction.getColDirection();
+        int rowDirection = direction.getRow();
+        int colDirection = direction.getCol();
         int row = position.getRow();
         int col = position.getCol();
 
@@ -121,6 +132,20 @@ public abstract class Chess implements Serializable {
         return movesOnOneDirection;
     }
 
+    public Set<Point> getAllPossibleMovesByOtherSide() {
+        Set<Point> moves = new HashSet<>();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                Chess chess = chessBoard[i][j];
+                if (chess.getColor() == this.color) {
+                    continue;
+                }
+                moves.addAll(chess.getPossibleMoves());
+            }
+        }
+        return moves;
+    }
+
     public int getRow() {
         return this.getPosition().getRow();
     }
@@ -129,12 +154,20 @@ public abstract class Chess implements Serializable {
         return this.getPosition().getCol();
     }
 
-    public boolean isWhiteColor() {
+    public boolean isWhite() {
         return this.getColor() == WHITE;
     }
 
-    public boolean isBlackColor() {
+    public boolean isBlack() {
         return this.getColor() == BLACK;
+    }
+
+    public boolean isRook() {
+        return this instanceof Rook;
+    }
+
+    protected boolean isUnmovedRook() {
+        return this.isRook() && !this.isMoved();
     }
 
     @Override
@@ -189,5 +222,13 @@ public abstract class Chess implements Serializable {
 
     public void setMoved(boolean moved) {
         isMoved = moved;
+    }
+
+    public Point getEnPassantOriginPawn() {
+        return enPassantOriginPawn;
+    }
+
+    public void setEnPassantOriginPawn(Point enPassantOriginPawn) {
+        this.enPassantOriginPawn = enPassantOriginPawn;
     }
 }

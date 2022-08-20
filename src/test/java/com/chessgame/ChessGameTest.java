@@ -8,7 +8,9 @@ import com.chessgame.util.Util;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.chessgame.chess.Color.BLACK;
 import static com.chessgame.chess.Color.WHITE;
@@ -115,6 +117,58 @@ public class ChessGameTest {
         knight.setChessBoard(chessBoard);
 
         List<Point> possibleMoves = knight.getPossibleMoves();
+        System.out.println("possibleMoves: " + possibleMoves.toString());
+    }
+
+    @Test
+    public void setTest() {
+        Set<Point> set = new HashSet<>();
+        set.add(new Point(0,0));
+        set.add(new Point(0,0));
+        System.out.println(set);
+    }
+
+    @Test
+    public void kingTest() {
+        Chess king = new King(BLACK, new Point(0, 4));
+        Chess rook1 = new Rook(BLACK, new Point(0, 0));
+        Chess rook2 = new Rook(BLACK, new Point(0, 7));
+        Chess sameColor = new Queen(BLACK, new Point(0, 3));
+
+        Chess[][] chessBoard = new Chess[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                chessBoard[i][j] = new NullChess(new Point(i, j));
+            }
+        }
+        chessBoard[0][4] = king;
+        chessBoard[0][0] = rook1;
+        chessBoard[0][7] = rook2;
+        chessBoard[0][6] = sameColor;
+        king.setChessBoard(chessBoard);
+
+        List<Point> possibleMoves = king.getPossibleMoves();
+        System.out.println("possibleMoves: " + possibleMoves.toString());
+    }
+
+    @Test
+    public void pawnGetForwardEatMovesTest() {
+        Chess pawn = new Pawn(BLACK, new Point(1, 4));
+        Chess counter = new Rook(WHITE, new Point(2, 3));
+        Chess sameColor = new Queen(BLACK, new Point(0, 3));
+
+        Chess[][] chessBoard = new Chess[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                chessBoard[i][j] = new NullChess(new Point(i, j));
+            }
+        }
+        chessBoard[1][4] = pawn;
+        chessBoard[2][3] = counter;
+        chessBoard[0][3] = sameColor;
+        pawn.setChessBoard(chessBoard);
+
+        List<Point> possibleMoves = pawn.getPossibleMoves();
         System.out.println("possibleMoves: " + possibleMoves.toString());
     }
 }

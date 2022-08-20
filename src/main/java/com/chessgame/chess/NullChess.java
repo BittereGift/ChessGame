@@ -1,5 +1,6 @@
 package com.chessgame.chess;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.chessgame.chess.Color.NULL;
@@ -21,12 +22,7 @@ public class NullChess extends Chess {
      */
     @Override
     public List<Point> getPossibleMoves() {
-        return null;
-    }
-
-    @Override
-    protected List<Point> getPossibleMovesOnOneDirection(Direction direction) {
-        throw new UnsupportedOperationException("Not supported");
+        return new ArrayList<>();
     }
 
 }

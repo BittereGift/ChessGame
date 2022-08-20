@@ -3,6 +3,8 @@ package com.chessgame.chess;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.chessgame.chess.Chess.Direction.*;
+
 /**
  * @author Bittere_Gift
  */
@@ -31,11 +33,12 @@ public class Pawn extends Chess {
     @Override
     public List<Point> getPossibleMoves() {
         List<Point> moves = new ArrayList<>();
-        List<Point> forwardMove = getForwardMoves();
-        List<Point> forwardEatMove = getForwardEatMoves();
-
-        moves.addAll(forwardMove);
-        moves.addAll(forwardEatMove);
+        List<Point> forwardMoves = getForwardMoves();
+        List<Point> forwardEatMoves = getForwardEatMoves();
+        List<Point> enPassantMoves = getEnPassantMoves();
+        moves.addAll(forwardMoves);
+        moves.addAll(forwardEatMoves);
+        moves.addAll(enPassantMoves);
         return moves;
     }
 
@@ -45,7 +48,7 @@ public class Pawn extends Chess {
         int col = this.getCol();
 
         //one step
-        row = isWhiteColor() ? row - 1 : row + 1;
+        row = isWhite() ? row - 1 : row + 1;
         Point point = new Point(row, col);
         if (!isLegalPosition(point)) {
             return new ArrayList<>();
@@ -53,7 +56,7 @@ public class Pawn extends Chess {
         moves.add(point);
 
         //two steps
-        row = isWhiteColor() ? row - 2 : row + 2;
+        row = isWhite() ? row - 1 : row + 1;
         point = new Point(row, col);
         if (isLegalPosition(point) && !isMoved()) {
             moves.add(point);
@@ -62,13 +65,34 @@ public class Pawn extends Chess {
     }
 
     private List<Point> getForwardEatMoves() {
-        //TODO getForwardEatMove
-        return new ArrayList<>();
+        List<Point> moves = new ArrayList<>();
+        int row = this.getRow();
+        int col = this.getCol();
+        row = isWhite() ? row + UP.getRow() : row + DOWN.getRow();
+        Point leftPoint = new Point(row, col + LEFT.getCol());
+        Point rightPoint = new Point(row, col + RIGHT.getCol());
+        if (isEatablePosition(leftPoint)) {
+            moves.add(leftPoint);
+        }
+        if (isEatablePosition(rightPoint)) {
+            moves.add(rightPoint);
+        }
+        return moves;
     }
 
     private List<Point> getEnPassantMoves() {
-        //TODO getEnPassantMoves
-        return new ArrayList<>();
+        List<Point> moves = new ArrayList<>();
+        if (!existEnPassantOriginPawn()) {
+            return moves;
+        }
+        int row = this.getEnPassantOriginPawn().getRow();
+        int col = this.getEnPassantOriginPawn().getCol();
+        row = isWhite() ? row + DOWN.getRow() : row + UP.getRow();
+        moves.add(new Point(row, col));
+        return moves;
     }
 
+    private boolean existEnPassantOriginPawn() {
+        return this.getEnPassantOriginPawn() != null;
+    }
 }

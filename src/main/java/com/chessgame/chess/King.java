@@ -2,6 +2,10 @@ package com.chessgame.chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static com.chessgame.chess.Chess.Direction.LEFT;
+import static com.chessgame.chess.Chess.Direction.RIGHT;
 
 /**
  * @author Bittere_Gift
@@ -55,8 +59,61 @@ public class King extends Chess {
 
     private List<Point> getCastlingMoves() {
         List<Point> moves = new ArrayList<>();
-        //TODO getCastlingMoves
+        if (isMoved() || isCheck()) {
+            return moves;
+        }
+
+        int row = getRow();
+        int col = getCol();
+        if (canCastling(LEFT)) {
+            moves.add(new Point(row, 2));
+        }
+        if (canCastling(RIGHT)) {
+            moves.add(new Point(row, 6));
+        }
         return moves;
+    }
+
+    @Override
+    public boolean isCheck() {
+        Set<Point> possibleMovesByOtherSide = getAllPossibleMovesByOtherSide();
+        return possibleMovesByOtherSide.contains(this.getPosition());
+    }
+
+    private boolean canCastling(Direction direction) {
+        int row = getRow();
+        int col = getCol();
+        int counter = 1;
+        while (true) {
+            int checkCol = direction == LEFT ? col - counter : col + counter;
+            Point point = new Point(row, checkCol);
+            if (!isInBoardPoint(point)) {
+                break;
+            }
+            if (existUnmovedRook(point)) {
+                return true;
+            }
+            if (!isSafeAndNullPosition(point)) {
+                break;
+            }
+            counter++;
+        }
+        return false;
+    }
+
+    private boolean isSafeAndNullPosition(Point point) {
+        return !isCastlingAttackedPoint(point) && isNullChessPosition(point);
+    }
+
+    private boolean isCastlingAttackedPoint(Point point) {
+        int col = point.getCol();
+        Set<Point> possibleMovesByOtherSide = getAllPossibleMovesByOtherSide();
+        return (col >= 2 && col <= 6) && possibleMovesByOtherSide.contains(point);
+    }
+
+    private boolean existUnmovedRook(Point point) {
+        Chess chess = getChessByPoint(point);
+        return chess.isUnmovedRook();
     }
 
 }

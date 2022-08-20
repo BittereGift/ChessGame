@@ -4,6 +4,11 @@ import com.chessgame.chess.*;
 import com.chessgame.player.AbstractPlayer;
 import com.chessgame.util.Util;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static com.chessgame.chess.Color.BLACK;
 import static com.chessgame.chess.Color.WHITE;
 
@@ -83,6 +88,29 @@ public class Game {
                 chessBoard[i][j].setChessBoard(chessBoard);
             }
         }
+    }
+
+    public Set<Point> getCurrentPlayerAllPossibleMoves() {
+        return getAllPossibleMoves(currentPlayerColor);
+    }
+
+    public Set<Point> getAllPossibleMoves(Color playerColor) {
+        Set<Point> moves = new HashSet<>();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                Chess chess = chessBoard[i][j];
+                if (chess.getColor() != playerColor) {
+                    continue;
+                }
+                List<Point> possibleMovesByChess =  getPossibleMovesByChess(chess);
+                moves.addAll(possibleMovesByChess);
+            }
+        }
+        return moves;
+    }
+
+    public List<Point> getPossibleMovesByChess(Chess chess) {
+        return chess.getPossibleMoves();
     }
 
     public void printChessBoard() {
