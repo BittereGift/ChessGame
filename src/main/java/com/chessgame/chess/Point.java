@@ -3,6 +3,8 @@ package com.chessgame.chess;
 import java.io.Serializable;
 import java.util.Objects;
 
+import static com.chessgame.game.Game.BOARD_SIZE;
+
 /**
  * @author Bittere_Gift
  */
@@ -14,6 +16,12 @@ public class Point implements Serializable {
     public Point(int row, int col) {
         this.row = row;
         this.col = col;
+    }
+
+    public boolean isInBoard() {
+        int row = getRow();
+        int col = getCol();
+        return row >= 0 && col >= 0 && row < BOARD_SIZE && col < BOARD_SIZE;
     }
 
     @Override

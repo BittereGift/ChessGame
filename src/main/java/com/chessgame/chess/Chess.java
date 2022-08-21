@@ -20,7 +20,7 @@ public abstract class Chess implements Serializable {
     private String name;
     private Chess[][] chessBoard;
     private boolean isMoved = false;
-    private Point enPassantOriginPawn = null;
+    private Point enPassantOriginPawnPoint = null;
 
     public Chess() {}
 
@@ -38,6 +38,12 @@ public abstract class Chess implements Serializable {
      * @return a List of Point of all possible strategies
      */
     public abstract List<Point> getPossibleMoves();
+
+    public void simpleMove(Point endPoint) {
+        chessBoard[getRow()][getCol()] = new NullChess(position);
+        this.position = endPoint;
+        chessBoard[getRow()][getCol()] = this;
+    }
 
     public boolean isCheck() {
         throw new UnsupportedOperationException("Not supported.");
@@ -146,6 +152,10 @@ public abstract class Chess implements Serializable {
         return moves;
     }
 
+    public boolean existEnPassantOriginPawn() {
+        return enPassantOriginPawnPoint != null;
+    }
+
     public int getRow() {
         return this.getPosition().getRow();
     }
@@ -164,6 +174,14 @@ public abstract class Chess implements Serializable {
 
     public boolean isRook() {
         return this instanceof Rook;
+    }
+
+    public boolean isPawn() {
+        return this instanceof Pawn;
+    }
+
+    public boolean isKing() {
+        return this instanceof King;
     }
 
     protected boolean isUnmovedRook() {
@@ -224,11 +242,11 @@ public abstract class Chess implements Serializable {
         isMoved = moved;
     }
 
-    public Point getEnPassantOriginPawn() {
-        return enPassantOriginPawn;
+    public Point getEnPassantOriginPawnPoint() {
+        return enPassantOriginPawnPoint;
     }
 
-    public void setEnPassantOriginPawn(Point enPassantOriginPawn) {
-        this.enPassantOriginPawn = enPassantOriginPawn;
+    public void setEnPassantOriginPawnPoint(Point enPassantOriginPawnPoint) {
+        this.enPassantOriginPawnPoint = enPassantOriginPawnPoint;
     }
 }

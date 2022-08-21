@@ -1,5 +1,6 @@
 package com.chessgame;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.chessgame.chess.*;
 import com.chessgame.game.Game;
 import com.chessgame.player.AbstractPlayer;
@@ -14,7 +15,6 @@ import java.util.Set;
 
 import static com.chessgame.chess.Color.BLACK;
 import static com.chessgame.chess.Color.WHITE;
-import static com.chessgame.game.Game.BOARD_SIZE;
 
 public class ChessGameTest {
 
@@ -41,14 +41,11 @@ public class ChessGameTest {
         Point point = new Point(1, 1);
         Chess[][] args1 = {{new King(BLACK, point)}, {new King(BLACK, point)}, {new King(BLACK, point)}};
         System.out.println("args1: " + Arrays.toString(args1));
-        Chess[][] args2 = Util.cloneChessBoard(args1);
+        Chess[][] args2 = ObjectUtil.cloneByStream(args1);
         System.out.println("args2:" + Arrays.toString(args2));
-        args1[0][0].setColor(WHITE);
         System.out.println("**************************************************");
-        System.out.println("args1: " + Arrays.toString(args1));
-        System.out.println(args1[0][0].getColor());
-        System.out.println("args2:" + Arrays.toString(args2));
-        System.out.println(args2[0][0].getColor());
+        System.out.println("args1" + args1);
+        System.out.println("args2" + args2);
     }
 
     @Test
@@ -170,5 +167,27 @@ public class ChessGameTest {
 
         List<Point> possibleMoves = pawn.getPossibleMoves();
         System.out.println("possibleMoves: " + possibleMoves.toString());
+    }
+
+    @Test
+    public void simpleMoveTest() {
+        AbstractPlayer zhangsan = new Player("zhangsan", "123");
+        AbstractPlayer lisi = new Player("lisi", "123");
+        Game game = new Game(zhangsan, lisi);
+        game.printChessBoard();
+        printLine();
+        System.out.println(game.getCurrentPlayer());
+        zhangsan.setMove(new Point(6, 0), new Point(3, 0));
+        try {
+            game.moveChessAndGoToNextRound();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        game.printChessBoard();
+        printLine();
+    }
+
+    private void printLine() {
+        System.out.println("--------------------------------------------------");
     }
 }

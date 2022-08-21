@@ -1,11 +1,13 @@
 package com.chessgame.player;
 
-import com.chessgame.chess.Chess;
+import com.chessgame.chess.Point;
+
+import java.io.Serializable;
 
 /**
  * @author Bittere_Gift
  */
-public abstract class AbstractPlayer {
+public abstract class AbstractPlayer implements Serializable {
 
     protected static int totalPlayerCount = 1;
     private int id;
@@ -13,6 +15,7 @@ public abstract class AbstractPlayer {
     private String password;
     private int playedCount;
     private int winCount;
+    private ChessStrategy strategy = new ChessStrategy();
 
     public void addWinCount(int addWinCount) {
         winCount += addWinCount;
@@ -20,6 +23,15 @@ public abstract class AbstractPlayer {
 
     public void addPlayedCount(int addPlayedCount) {
         playedCount += addPlayedCount;
+    }
+
+    public void setMove(Point start, Point end) {
+        strategy.setStartPoint(start);
+        strategy.setEndPoint(end);
+    }
+
+    public void setMove() {
+        throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
@@ -75,5 +87,13 @@ public abstract class AbstractPlayer {
 
     public double getWinRate() {
         return playedCount == 0 ? 0 : (double) (winCount / totalPlayerCount);
+    }
+
+    public ChessStrategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(ChessStrategy strategy) {
+        this.strategy = strategy;
     }
 }

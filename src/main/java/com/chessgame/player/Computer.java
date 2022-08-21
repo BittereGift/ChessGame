@@ -11,4 +11,9 @@ public abstract class Computer extends AbstractPlayer {
         this.setPlayedCount(0);
         this.setWinCount(0);
     }
+
+    @Override
+    public void setMove() {
+
+    }
 }

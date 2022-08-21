@@ -85,14 +85,14 @@ public class Pawn extends Chess {
         if (!existEnPassantOriginPawn()) {
             return moves;
         }
-        int row = this.getEnPassantOriginPawn().getRow();
-        int col = this.getEnPassantOriginPawn().getCol();
+        int row = this.getEnPassantOriginPawnPoint().getRow();
+        int col = this.getEnPassantOriginPawnPoint().getCol();
         row = isWhite() ? row + DOWN.getRow() : row + UP.getRow();
         moves.add(new Point(row, col));
         return moves;
     }
 
-    private boolean existEnPassantOriginPawn() {
-        return this.getEnPassantOriginPawn() != null;
+    public boolean existEnPassantOriginPawn() {
+        return this.getEnPassantOriginPawnPoint() != null;
     }
 }
