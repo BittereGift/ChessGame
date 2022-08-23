@@ -87,7 +87,7 @@ public class Pawn extends Chess {
         }
         int row = this.getEnPassantOriginPawnPoint().getRow();
         int col = this.getEnPassantOriginPawnPoint().getCol();
-        row = isWhite() ? row + DOWN.getRow() : row + UP.getRow();
+        row = isWhite() ? row + UP.getRow() : row + DOWN.getRow();
         moves.add(new Point(row, col));
         return moves;
     }

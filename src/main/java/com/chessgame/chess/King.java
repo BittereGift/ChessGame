@@ -102,7 +102,7 @@ public class King extends Chess {
     }
 
     private boolean isSafeAndNullPosition(Point point) {
-        return !isCastlingAttackedPoint(point) && isNullChessPosition(point);
+        return isNullChessPosition(point) && !isCastlingAttackedPoint(point);
     }
 
     private boolean isCastlingAttackedPoint(Point point) {

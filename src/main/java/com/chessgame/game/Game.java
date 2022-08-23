@@ -5,6 +5,7 @@ import com.chessgame.chess.*;
 import com.chessgame.game.caretaker.GameCaretaker;
 import com.chessgame.player.AbstractPlayer;
 import com.chessgame.player.ChessStrategy;
+import com.chessgame.util.Util;
 
 import java.io.Serializable;
 import java.util.*;
@@ -20,7 +21,7 @@ public class Game implements Serializable {
 
     public final static int BOARD_SIZE = 8;
 
-    private GameCaretaker caretaker = GameCaretaker.getInstance();
+    private GameCaretaker caretaker = new GameCaretaker();
     private AbstractPlayer whitePlayer;
     private AbstractPlayer blackPlayer;
     private int round;
@@ -125,9 +126,21 @@ public class Game implements Serializable {
     public void moveChessAndGoToNextRound() {
         ChessStrategy strategy = currentPlayer.getStrategy();
         moveChess(strategy);
+        clearEnPassant();
         setToNextRound();
         strategy.reset();
         createMemento();
+    }
+
+    private void clearEnPassant() {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                Chess chess = chessBoard[i][j];
+                if (isCurrentPlayersChess(chess)) {
+                    chess.setEnPassantOriginPawnPoint(null);
+                }
+            }
+        }
     }
 
     private void moveChess(ChessStrategy strategy) {
@@ -157,11 +170,12 @@ public class Game implements Serializable {
         if (Math.abs(originRow - currentRow) == 2) {
             Point leftPoint = new Point(currentRow, currentCol - 1);
             Point rightPoint = new Point(currentRow, currentCol + 1);
+            Point newPoint = new Point(currentRow, currentCol);
             if (leftPoint.isInBoard()) {
-                getChessByPoint(leftPoint).setEnPassantOriginPawnPoint(leftPoint);
+                getChessByPoint(leftPoint).setEnPassantOriginPawnPoint(newPoint);
             }
             if (rightPoint.isInBoard()) {
-                getChessByPoint(rightPoint).setEnPassantOriginPawnPoint(rightPoint);
+                getChessByPoint(rightPoint).setEnPassantOriginPawnPoint(newPoint);
             }
         } else if (currentCol != originCol && chessMoved.existEnPassantOriginPawn()) {
             //enPassant
@@ -185,12 +199,13 @@ public class Game implements Serializable {
             Point rookPoint = new Point(currentRow, rookCol);
             Chess rook = getChessByPoint(rookPoint);
             rook.simpleMove(new Point(currentRow, currentCol + moveColDiffer));
+            rook.setMoved(true);
         }
     }
 
     private void setToNextRound() {
         currentPlayer = isWhitePlayer() ? blackPlayer : whitePlayer;
-        currentPlayerColor = isWhitePlayer() ? WHITE : BLACK;
+        currentPlayerColor = isWhitePlayer() ? BLACK : WHITE;
         round++;
     }
 
@@ -247,6 +262,76 @@ public class Game implements Serializable {
     }
 
     /**
+     * <code>isCheck()</code> should be checked before use this method.
+     * @return
+     */
+    public boolean isMate() {
+        Chess king = getCurrentPlayersKing();
+
+        //if chess attacking eatable
+        List<Chess> attackingKingsChessList = getAttackingKingsChess(king);
+        if (attackingKingsChessList.size() == 1) {
+            Chess attackingChess = attackingKingsChessList.get(0);
+            Set<Point> currentPlayerMoves = getCurrentPlayerAllPossibleMoves();
+            if (currentPlayerMoves.contains(attackingChess.getPosition())) {
+                return false;
+            }
+        }
+
+        //if king can move to a safe place
+        List<Point> kingPossibleMoves = king.getPossibleMoves();
+        Set<Point> allPossibleMovesByOtherSide = king.getAllPossibleMovesByOtherSide();
+        if (!allPossibleMovesByOtherSide.containsAll(kingPossibleMoves)) {
+            return false;
+        }
+
+        //TODO if there is a chess that can save the king
+        return true;
+    }
+
+    private List<Chess> getAttackingKingsChess(Chess king) {
+        Point kingPosition = king.getPosition();
+        List<Chess> chessList = new ArrayList<>();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                Chess chess = chessBoard[i][j];
+                if (containsKingPosition(chess, kingPosition)) {
+                    chessList.add(chess);
+                }
+            }
+        }
+        return chessList;
+    }
+
+    private boolean containsKingPosition(Chess chess, Point kingPosition) {
+        return !isCurrentPlayersChess(chess) && chess.getPossibleMoves().contains(kingPosition);
+    }
+
+    public boolean isCheck() {
+        return getCurrentPlayersKing().isCheck();
+    }
+
+    private Chess getCurrentPlayersKing() {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                Chess chess = chessBoard[i][j];
+                if (isCurrentPlayersKing(chess)) {
+                    return chess;
+                }
+            }
+        }
+        throw new IllegalStateException("No current players king found");
+    }
+
+    private boolean isCurrentPlayersKing(Chess chess) {
+        return chess.isKing() && isCurrentPlayersChess(chess);
+    }
+
+    private boolean isCurrentPlayersChess(Chess chess) {
+        return currentPlayerColor == chess.getColor();
+    }
+
+    /**
      * This method creates a memento to the undo list
      */
     private void createMemento() {
@@ -257,7 +342,7 @@ public class Game implements Serializable {
      * This method should catch an exception when there is no mementos.
      */
     public void undo() {
-        Game memento = caretaker.getMemento();
+        Game memento = caretaker.undoMemento();
         setWhitePlayer(memento.getWhitePlayer());
         setBlackPlayer(memento.getWhitePlayer());
         setRound(memento.getRound());
@@ -273,7 +358,7 @@ public class Game implements Serializable {
         currentPlayerColor = WHITE;
     }
 
-    protected Chess getChessByPoint(Point p) {
+    public Chess getChessByPoint(Point p) {
         return chessBoard[p.getRow()][p.getCol()];
     }
 
@@ -285,13 +370,32 @@ public class Game implements Serializable {
         return currentPlayerColor == BLACK;
     }
 
-    public void printChessBoard() {
+    @Override
+    public String toString() {
+        return Util.getLine() +
+                "\nwhitePlayer=" + whitePlayer +
+                "\nblackPlayer=" + blackPlayer +
+                "\nround=" + round +
+                "\ncurrentPlayer=" + currentPlayer +
+                "\ncurrentPlayerColor=" + currentPlayerColor +
+                "\n" + Util.getLine() +
+                "\n" + getChessBoardString() +
+                "\n" + Util.getLine();
+    }
+
+    private String getChessBoardString() {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                System.out.printf(chessBoard[i][j] + "\t");
+                sb.append(chessBoard[i][j]).append("\t");
             }
-            System.out.println();
+            sb.append('\n');
         }
+        return sb.toString();
+    }
+
+    public void printChessBoard() {
+        System.out.println(getChessBoardString());
     }
 
     public AbstractPlayer getWhitePlayer() {

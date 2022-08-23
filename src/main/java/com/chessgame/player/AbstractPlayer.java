@@ -1,6 +1,7 @@
 package com.chessgame.player;
 
 import com.chessgame.chess.Point;
+import com.chessgame.player.memento.PlayerMemento;
 
 import java.io.Serializable;
 
@@ -32,6 +33,16 @@ public abstract class AbstractPlayer implements Serializable {
 
     public void setMove() {
         throw new UnsupportedOperationException("Not supported.");
+    }
+
+    public PlayerMemento saveStateToMemento() {
+        PlayerMemento memento = new PlayerMemento();
+        memento.setId(id);
+        memento.setName(name);
+        memento.setPassword(password);
+        memento.setPlayedCount(playedCount);
+        memento.setWinCount(winCount);
+        return memento;
     }
 
     @Override

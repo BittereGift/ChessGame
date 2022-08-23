@@ -43,6 +43,7 @@ public abstract class Chess implements Serializable {
         chessBoard[getRow()][getCol()] = new NullChess(position);
         this.position = endPoint;
         chessBoard[getRow()][getCol()] = this;
+        this.setMoved(true);
     }
 
     public boolean isCheck() {
@@ -143,7 +144,8 @@ public abstract class Chess implements Serializable {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 Chess chess = chessBoard[i][j];
-                if (chess.getColor() == this.color) {
+                //TODO
+                if (chess.getColor() == this.color || chess.isKing()) {
                     continue;
                 }
                 moves.addAll(chess.getPossibleMoves());

@@ -2,28 +2,22 @@ package com.chessgame.game.caretaker;
 
 import com.chessgame.game.Game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Bittere_Gift
  */
-public class GameCaretaker {
+public class GameCaretaker implements Serializable {
 
-    private final static GameCaretaker INSTANCE = new GameCaretaker();
     private List<Game> gamePrototypeList = new ArrayList<>();
-
-    private GameCaretaker() {}
-
-    public static GameCaretaker getInstance() {
-        return INSTANCE;
-    }
 
     public void addMemento(Game gamePrototype) {
         gamePrototypeList.add(gamePrototype);
     }
 
-    public Game getMemento() {
+    public Game undoMemento() {
         if (gamePrototypeList.isEmpty()) {
             throw new IllegalStateException("No game memento");
         }
